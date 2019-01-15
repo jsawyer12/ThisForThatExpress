@@ -1,0 +1,61 @@
+<head>
+  <meta charset="utf-8">
+  <title>This or That App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href='/css/index.css' />
+</head>
+<body class="text-center">
+  <div class="box-wrap">
+    <div class="box">
+      <label class="lbl">Wait, what does your startup do?</label>
+      <label class="lbl"> So, basically, it is like a</label>
+      <div class="lbl-big" id="this"></div>
+      <label class="lbl">for</label>
+      <div class="lbl-big" id="that"></div>
+      <button class="btn btn-primary btn-blck" id="button" type="button">Refresh</button>
+    </div>
+  </div>
+</body>
+<script type="text/javascript">
+  document.getElementById('button').addEventListener('click', render);
+
+  function render() {
+    var xhr = new XMLHttpRequest();
+    var url = '#';
+    xhr.open('POST', url, true);
+    xhr.overrideMimeType("application/json");
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        var json = JSON.parse(xhr.response);
+
+        if (json == 'undefined') {
+          document.getElementById("this").innerHTML = "this";
+          document.getElementById("that").innerHTML = "that!";
+          console.log('could not load json');
+        }
+
+        else {
+          typeWriter(json.this, 0, "this");
+          typeWriter(json.that, 0, "that");
+        }
+      }
+    }
+    xhr.send();
+  }
+
+  function typeWriter(text, i, elId) {
+    // check if text isn't finished yet
+    if (i < (text.length)) {
+      // add next character to h1
+     document.getElementById(elId).innerHTML = text.substring(0, i+1);
+
+      // wait for a while and call this function again for next character
+      setTimeout(function() {
+        typeWriter(text, i + 1, elId)
+      }, 100);
+    }
+  }
+
+  render();
+</script>
